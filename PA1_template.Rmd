@@ -2,7 +2,7 @@
 
 
 ## Loading and preprocessing the data
-```{r}
+```{r setup}
 setwd("~/Coursera/Reproducible Research/RepData_PeerAssessment1")
 library(ggplot2)
 library(lattice)
@@ -14,7 +14,7 @@ interval <- aggregate(steps~interval, data=activity, FUN="mean")
 
 
 ## What is mean total number of steps taken per day?
-```{r fig.height=4}
+```{r steps}
 hist(daily$steps, main="Histogram of Steps Per Day", xlab="Steps Per Day")
 stepsMean <- mean(daily$steps)
 stepsMedian <- median(daily$steps)
@@ -25,7 +25,7 @@ The mean number of steps per day is `r stepsMean` and the median number per day 
 
 ## What is the average daily activity pattern?
 
-```{r}
+```{r stepsperinterval}
 plot(interval$interval, interval$steps, type="l", ylab="Steps", xlab="Interval", main="Mean of Steps Taken Per Daily Interval")
 maxInterval <- interval[which.max(interval$steps), "interval"]
 ```
@@ -45,7 +45,7 @@ table(complete.cases(activity))
 Next, create a dataset that imputes values for the missing values by
 using the average number of steps per interval.
 
-```{r}
+```{r stepsimputed}
 imputed <- ddply(activity, .(interval), function(activity) {activity$steps[is.na(activity$steps)] <- mean(activity$steps, na.rm=TRUE); return(activity)})
 dailyImputed <- aggregate(steps~date, data=imputed, FUN="sum")
 hist(dailyImputed$steps, main="Histogram of Steps Per Day", xlab="Steps Per Day")
@@ -61,7 +61,7 @@ Using the new imputed dataset, the  median number per day is `r stepsMedianImput
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+```{r weekendweekday}
 imputed$date <- strptime(imputed$date, format="%Y-%m-%d")
 imputed$weekday <- weekdays(imputed$date)
 imputed$weekdayGroup <- ifelse(imputed$weekday %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
